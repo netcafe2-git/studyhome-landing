@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyHome - Φοιτητικές Κατοικίες</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="c" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(255,255,255,0.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23c)"/><circle cx="800" cy="300" r="150" fill="url(%23c)"/><circle cx="400" cy="700" r="120" fill="url(%23c)"/></svg>');
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            animation: slideInLeft 1s ease-out;
+        }
+
+        .hero-text .highlight {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            animation: slideInLeft 1s ease-out 0.2s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            animation: slideInLeft 1s ease-out 0.4s both;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #333;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px 30px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-visual {
+            position: relative;
+            animation: slideInRight 1s ease-out 0.3s both;
+        }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #FFD700);
+            background-size: 300% 100%;
+            animation: gradient 3s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .search-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .search-form h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            position: relative;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .features-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .features-header p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 80px 0;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-item p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .cta-content p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 20px;
+            color: #FFD700;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-section ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #FFD700;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            text-align: center;
+            color: #666;
+        }
+
+        /* Animations */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            .features-header h2 {
+                font-size: 2rem;
+            }
+
+            .cta-content h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">StudyHome</div>
+                <ul class="nav-links">
+                    <li><a href="#home">Αρχική</a></li>
+                    <li><a href="#search">Αναζήτηση</a></li>
+                    <li><a href="#services">Υπηρεσίες</a></li>
+                    <li><a href="#about">Σχετικά</a></li>
+                    <li><a href="#contact">Επικοινωνία</a></li>
+                </ul>
+                <a href="#register" class="cta-button">Εγγραφή</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Βρες την <span class="highlight">Ιδανική</span> Φοιτητική Κατοικία</h1>
+                    <p>Η πλατφόρμα που συνδέει φοιτητές με τις καλύτερες επιλογές στέγασης. Ενοικίαση, πώληση και συγκάτοικος - όλα σε ένα μέρος.</p>
+                    <div class="hero-buttons">
+                        <a href="#search" class="btn-primary">Ξεκίνα Αναζήτηση</a>
+                        <a href="#about" class="btn-secondary">Μάθε Περισσότερα</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="hero-card">
+                        <form class="search-form">
+                            <h3>Γρήγορη Αναζήτηση</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Πόλη</label>
+                                    <select>
+                                        <option>Αθήνα</option>
+                                        <option>Θεσσαλονίκη</option>
+                                        <option>Πάτρα</option>
+                                        <option>Ηράκλειο</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Τύπος</label>
+                                    <select>
+                                        <option>Ενοικίαση</option>
+                                        <option>Πώληση</option>
+                                        <option>Συγκάτοικος</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Μέγιστη Τιμή (€)</label>
+                                    <input type="number" placeholder="π.χ. 500">
+                                </div>
+                                <div class="form-group">
+                                    <label>Δωμάτια</label>
+                                    <select>
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3+</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="search-btn">🔍 Αναζήτηση</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="services">
+        <div class="container">
+            <div class="features-header">
+                <h2>Γιατί StudyHome;</h2>
+                <p>Προσφέρουμε τις καλύτερες λύσεις στέγασης για φοιτητές με σύγχρονα εργαλεία και υπηρεσίες</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🏠</div>
+                    <h3>Επιλεγμένες Κατοικίες</h3>
+                    <p>Όλες οι κατοικίες ελέγχονται για ποιότητα και ασφάλεια. Μόνο οι καλύτερες επιλογές στην πλατφόρμα μας.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Εύκολη Επικοινωνία</h3>
+                    <p>Συνδέσου άμεσα με ιδιοκτήτες και άλλους φοιτητές. Chat, βίντεο κλήσεις και ασφαλής ανταλλαγή στοιχείων.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Έξυπνη Αναζήτηση</h3>
+                    <p>Προηγμένα φίλτρα αναζήτησης που σε βοηθούν να βρεις ακριβώς αυτό που ψάχνεις γρήγορα και εύκολα.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Ασφαλείς Συναλλαγές</h3>
+                    <p>Προστατευμένες πληρωμές και επαληθευμένοι χρήστες για μέγιστη ασφάλεια σε όλες τις συναλλαγές.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile App</h3>
+                    <p>Πρόσβαση παντού με την mobile εφαρμογή μας. Ειδοποιήσεις για νέες καταχωρήσεις και ενημερώσεις.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Κοινότητα Φοιτητών</h3>
+                    <p>Συμβουλές, αξιολογήσεις και εμπειρίες από άλλους φοιτητές για να κάνεις τη σωστή επιλογή.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>15,000+</h3>
+                    <p>Φοιτητές Εγγεγραμμένοι</p>
+                </div>
+                <div class="stat-item">
+                    <h3>3,500+</h3>
+                    <p>Διαθέσιμες Κατοικίες</p>
+                </div>
+                <div class="stat-item">
+                    <h3>25+</h3>
+                    <p>Πόλεις σε Όλη την Ελλάδα</p>
+                </div>
+                <div class="stat-item">
+                    <h3>98%</h3>
+                    <p>Ικανοποιημένοι Χρήστες</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ξεκίνα Τώρα την Αναζήτηση</h2>
+                <p>Εγγραφή δωρεάν και πρόσβαση σε χιλιάδες επιλογές στέγασης για φοιτητές σε όλη την Ελλάδα</p>
+                <div class="hero-buttons">
+                    <a href="#register" class="btn-primary">Δωρεάν Εγγραφή</a>
+                    <a href="#demo" class="btn-secondary">Δες Demo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>StudyHome</h3>
+                    <p>Η καλύτερη πλατφόρμα για φοιτητικές κατοικίες στην Ελλάδα. Βρες το σπίτι των ονείρων σου.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Υπηρεσίες</h3>
+                    <ul>
+                        <li><a href="#rent">Ενοικίαση</a></li>
+                        <li><a href="#buy">Αγορά</a></li>
+                        <li><a href="#roommate">Συγκάτοικος</a></li>
+                        <li><a href="#services">Υπηρεσίες</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Εταιρεία</h3>
+                    <ul>
+                        <li><a href="#about">Σχετικά με εμάς</a></li>
+                        <li><a href="#careers">Καριέρες</a></li>
+                        <li><a href="#press">Τύπος</a></li>
+                        <li><a href="#blog">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Υποστήριξη</h3>
+                    <ul>
+                        <li><a href="#help">Βοήθεια</a></li>
+                        <li><a href="#contact">Επικοινωνία</a></li>
+                        <li><a href="#privacy">Απόρρητο</a></li>
+                        <li><a href="#terms">Όροι Χρήσης</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 StudyHome. Όλα τα δικαιώματα διατηρούνται.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Counter animation for stats
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-item h3');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = entry.target;
+                        const target = parseInt(counter.textContent.replace(/[^0-9]/g, ''));
+                        const duration = 2000;
+                        const increment = target / (duration / 16);
+                        let current = 0;
+                        
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= target) {
+                                counter.textContent = counter.textContent.replace(/[0-9,]+/, target.toLocaleString());
+                                clearInterval(timer);
+                            } else {
+                                counter.textContent = counter.textContent.replace(/[0-9,]+/, Math.floor(current).toLocaleString());
+                            }
+                        }, 16);
+                        
+                        observer.unobserve(counter);
+                    }
+                });
+            });
+            
+            counters.forEach(counter => observer.observe(counter));
+        }
+
+        // Initialize counter animation
+        animateCounters();
+
+        // Feature cards hover effect
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Form submission handling
+        document.querySelector('.search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const city = this.querySelector('select[name="city"]') || this.querySelector('select');
+            const type = this.querySelectorAll('select')[1];
+            const price = this.querySelector('input[type="number"]');
+            const rooms = this.querySelectorAll('select')[2];
+            
+            // Simple validation
+            if (!city.value || !type.value) {
+                alert('Παρακαλώ συμπληρώστε όλα τα απαραίτητα πεδία');
+                return;
+            }
+            
+            // Simulate search (in real app, this would make an API call)
+            const searchBtn = this.querySelector('.search-btn');
+            const originalText = searchBtn.textContent;
+            searchBtn.textContent = '🔍 Αναζήτηση...';
+            searchBtn.disabled = true;
+            
+            setTimeout(() => {
+                searchBtn.textContent = originalText;
+                searchBtn.disabled = false;
+                alert(`Αναζήτηση για ${type.value} στην ${city.value} ${price.value ? 'έως ' + price.value + '€' : ''}`);
+            }, 1500);
+        });
+
+        // Parallax effect for hero section
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.hero::before');
+            const speed = scrolled * 0.5;
+            
+            if (parallax) {
+                parallax.style.transform = `translateY(${speed}px)`;
+            }
+        });
+
+        // Add floating animation to hero cards
+        function addFloatingAnimation() {
+            const heroCard = document.querySelector('.hero-card');
+            if (heroCard) {
+                let start = Date.now();
+                
+                function animate() {
+                    const elapsed = Date.now() - start;
+                    const yOffset = Math.sin(elapsed * 0.001) * 5;
+                    heroCard.style.transform = `translateY(${yOffset}px)`;
+                    requestAnimationFrame(animate);
+                }
+                
+                animate();
+            }
+        }
+
+        // Initialize floating animation
+        addFloatingAnimation();
+
+        // Add intersection observer for feature cards animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '50px'
+        };
+
+        const featuresObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Apply observer to feature cards
+        document.querySelectorAll('.feature-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+            featuresObserver.observe(card);
+        });
+
+        // Add dynamic gradient animation to CTA buttons
+        document.querySelectorAll('.btn-primary, .btn-secondary').forEach(button => {
+            button.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                this.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.2), transparent 50%)`;
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                // Reset to original gradient
+                if (this.classList.contains('btn-primary')) {
+                    this.style.background = 'linear-gradient(45deg, #FFD700, #FFA500)';
+                } else {
+                    this.style.background = 'rgba(255, 255, 255, 0.2)';
+                }
+            });
+        });
+
+        // Mobile menu toggle (basic implementation)
+        const createMobileMenu = () => {
+            const nav = document.querySelector('.nav-content');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (window.innerWidth <= 768) {
+                if (!document.querySelector('.mobile-menu-btn')) {
+                    const menuBtn = document.createElement('button');
+                    menuBtn.className = 'mobile-menu-btn';
+                    menuBtn.innerHTML = '☰';
+                    menuBtn.style.cssText = `
+                        background: none;
+                        border: none;
+                        font-size: 1.5rem;
+                        color: #333;
+                        cursor: pointer;
+                        padding: 10px;
+                    `;
+                    
+                    menuBtn.addEventListener('click', () => {
+                        navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+                        navLinks.style.flexDirection = 'column';
+                        navLinks.style.position = 'absolute';
+                        navLinks.style.top = '100%';
+                        navLinks.style.left = '0';
+                        navLinks.style.right = '0';
+                        navLinks.style.background = 'white';
+                        navLinks.style.padding = '20px';
+                        navLinks.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                    });
+                    
+                    nav.appendChild(menuBtn);
+                }
+            }
+        };
+
+        // Initialize mobile menu
+        createMobileMenu();
+        window.addEventListener('resize', createMobileMenu);
+
+        // Add loading animation to the page
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        console.log('StudyHome Platform Loaded Successfully! 🏠✨');
+    </script>
+</body>
+</html>
