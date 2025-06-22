@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyHome - Φοιτητικές Κατοικίες</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Page sections - hide all by default except home */
+        .page-section {
+            display: none;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Home section styles (existing) */
+        #home {
+            display: block;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="c" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(255,255,255,0.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23c)"/><circle cx="800" cy="300" r="150" fill="url(%23c)"/><circle cx="400" cy="700" r="120" fill="url(%23c)"/></svg>');
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            animation: slideInLeft 1s ease-out;
+        }
+
+        .hero-text .highlight {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            animation: slideInLeft 1s ease-out 0.2s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            animation: slideInLeft 1s ease-out 0.4s both;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #333;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px 30px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-visual {
+            position: relative;
+            animation: slideInRight 1s ease-out 0.3s both;
+        }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Services page styles */
+        .services-page {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 120px 0 60px;
+        }
+
+        .services-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .services-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .services-header p {
+            font-size: 1.3rem;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .pricing-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .pricing-section h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .pricing-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+        }
+
+        .pricing-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pricing-card .price {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 20px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pricing-card .range {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pricing-card ul {
+            list-style: none;
+            text-align: left;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pricing-card ul li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .pricing-card ul li:before {
+            content: '✓';
+            color: #FFD700;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .additional-services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .service-card .icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .service-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .service-card .price-tag {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* Search Results Page */
+        .search-results-page {
+            background: #f8f9fa;
+            padding: 120px 0 60px;
+        }
+
+        .search-header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .property-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .property-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .property-image {
+            height: 200px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            position: relative;
+        }
+
+        .property-price {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .property-content {
+            padding: 25px;
+        }
+
+        .property-content h3 {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .property-details {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            color: #666;
+        }
+
+        .property-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+
+        /* Property Details Page */
+        .property-page {
+            background: #f8f9fa;
+            padding: 120px 0 60px;
+        }
+
+        .property-details-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .property-gallery {
+            height: 400px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4rem;
+            position: relative;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .gallery-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .gallery-dot.active {
+            background: white;
+        }
+
+        .property-info {
+            padding: 40px;
+        }
+
+        .property-info h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .property-price-big {
+            font-size: 2rem;
+            color: #667eea;
+            font-weight: 800;
+            margin-bottom: 30px;
+        }
+
+        .property-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .feature-item .icon {
+            font-size: 1.5rem;
+        }
+
+        /* Services Selection for Property */
+        .services-selection {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .services-selection h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .services-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .service-option {
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-option:hover, .service-option.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .service-option input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .service-option h4 {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .service-option p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .service-option .service-price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        /* Reviews/Feedback Page */
+        .reviews-page {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 120px 0 60px;
+        }
+
+        .reviews-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .reviews-section, .add-review-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .reviews-section h2, .add-review-section h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .review-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reviewer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .star-rating {
+            color: #FFD700;
+            font-size: 1.2rem;
+        }
+
+        .review-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .rating-input input[type="radio"] {
+            display: none;
+        }
+
+        .rating-input label {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .rating-input input[type="radio"]:checked ~ label,
+        .rating-input label:hover {
+            color: #FFD700;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .services-header h1 {
+                font-size: 2rem;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .additional-services {
+                grid-template-columns: 1fr;
+            }
+
+            .reviews-container {
+                grid-template-columns: 1fr;
+            }
+
+            .search-filters {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Page transition animations */
+        .page-section {
+            animation: fadeInUp 0.5s ease;
+        }
+
+        /* Utility classes */
+        .text-center { text-align: center; }
+        .mb-20 { margin-bottom: 20px; }
+        .mb-30 { margin-bottom: 30px; }
+        .mt-30 { margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo" onclick="showPage('home')">StudyHome</div>
+                <ul class="nav-links">
+                    <li><a onclick="showPage('home')">Αρχική</a></li>
+                    <li><a onclick="showPage('search')">Αναζήτηση</a></li>
+                    <li><a onclick="showPage('services')">Υπηρεσίες</a></li>
+                    <li><a onclick="showPage('reviews')">Κριτικές</a></li>
+                    <li><a onclick="showPage('contact')">Επικοινωνία</a></li>
+                </ul>
+                <a href="#register" class="cta-button">Εγγραφή</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HOME PAGE -->
+    <section id="home" class="page-section active">
+        <div class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1>Βρες την <span class="highlight">Ιδανική</span> Φοιτητική Κατοικία</h1>
+                        <p>Η πλατφόρμα που συνδέει φοιτητές με τις καλύτερες επιλογές στέγασης. Σταθερές χρεώσεις μεσιτίας, επιπλέον υπηρεσίες και αξιόπιστες κριτικές.</p>
+                        <div class="hero-buttons">
+                            <a onclick="showPage('search')" class="btn-primary">Ξεκίνα Αναζήτηση</a>
+                            <a onclick="showPage('services')" class="btn-secondary">Δες τις Υπηρεσίες μας</a>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="hero-card">
+                            <h3 style="color: #333; margin-bottom: 20px; text-align: center;">🏠 Γρήγορη Αναζήτηση</h3>
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <div style="display: flex; gap: 10px;">
+                                    <select style="flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px;">
+                                        <option>Αθήνα</option>
+                                        <option>Θεσσαλονίκη</option>
+                                        <option>Πάτρα</option>
+                                        <option>Λάρισα</option>
+                                    </select>
+                                    <select style="flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px;">
+                                        <option>Ενοικίαση</option>
+                                        <option>Πώληση</option>
+                                        <option>Συγκάτοικος</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="number" placeholder="Μέγιστη τιμή (€)" style="flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px;">
+                                    <select style="flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px;">
+                                        <option>1 δωμάτιο</option>
+                                        <option>2 δωμάτια</option>
+                                        <option>3+ δωμάτια</option>
+                                    </select>
+                                </div>
+                                <button onclick="showPage('search')" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">🔍 Αναζήτηση</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Features Preview -->
+        <div style="background: rgba(255,255,255,0.1); padding: 80px 0;">
+            <div class="container">
+                <h2 style="text-align: center; color: white; font-size: 2.5rem; margin-bottom: 50px;">Γιατί StudyHome;</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                    <div style="background: rgba(255,255,255,0.95); padding: 30px; border-radius: 15px; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">💰</div>
+                        <h3 style="color: #333; margin-bottom: 15px;">Σταθερές Χρεώσεις</h3>
+                        <p style="color: #666;">50€, 100€ ή 300€ - τέλος στις υπερβολικές μεσιτίες!</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.95); padding: 30px; border-radius: 15px; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">⭐</div>
+                        <h3 style="color: #333; margin-bottom: 15px;">Κριτικές & Feedback</h3>
+                        <p style="color: #666;">Ιδιοκτήτες και ενοικιαστές αξιολογούν ο ένας τον άλλον</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.95); padding: 30px; border-radius: 15px; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">🧹</div>
+                        <h3 style="color: #333; margin-bottom: 15px;">Επιπλέον Υπηρεσίες</h3>
+                        <p style="color: #666;">Καθαρισμός, φωτογράφιση, επιδιορθώσεις</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.95); padding: 30px; border-radius: 15px; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">👥</div>
+                        <h3 style="color: #333; margin-bottom: 15px;">Φοιτητικά Viewing</h3>
+                        <p style="color: #666;">Φοιτητές δείχνουν κατοικίες σε συναδέλφους (σύντομα)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES PAGE -->
+    <section id="services" class="page-section services-page">
+        <div class="container">
+            <div class="services-header">
+                <h1>Οι Υπηρεσίες μας</h1>
+                <p>Προσφέρουμε καινοτόμες λύσεις που λείπουν από την αγορά των μεσιτιών. Σταθερές τιμές, ποιότητα και διαφάνεια.</p>
+            </div>
+
+            <!-- Σταθερές Χρεώσεις Μεσιτίας -->
+            <div class="pricing-section">
+                <h2>🏠 Σταθερές Χρεώσεις Μεσιτίας</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 30px;">Τέλος στις υπερβολικές μεσιτίες! Σταθερές τιμές ανάλογα με το ενοίκιο.</p>
+                
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>Basic</h3>
+                        <div class="price">50€</div>
+                        <div class="range">Ενοίκιο έως 200€</div>
+                        <ul>
+                            <li>Καταχώρηση αγγελίας</li>
+                            <li>Επικοινωνία με ενδιαφερομένους</li>
+                            <li>Βασική υποστήριξη</li>
+                            <li>Έλεγχος στοιχείων ενοικιαστή</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Standard</h3>
+                        <div class="price">100€</div>
+                        <div class="range">Ενοίκιο έως 500€</div>
+                        <ul>
+                            <li>Όλα από το Basic πλάνο</li>
+                            <li>Προτεραιότητα στις αναζητήσεις</li>
+                            <li>Φωτογραφίες υψηλής ποιότητας</li>
+                            <li>Έλεγχος πιστοληπτικής ικανότητας</li>
+                            <li>Βοήθεια στη σύνταξη συμβολαίου</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Premium</h3>
+                        <div class="price">300€</div>
+                        <div class="range">Ενοίκιο έως 1000€</div>
+                        <ul>
+                            <li>Όλα από το Standard πλάνο</li>
+                            <li>Professional φωτογράφιση</li>
+                            <li>360° virtual tour</li>
+                            <li>Εγγύηση ενοικίασης σε 30 ημέρες</li>
+                            <li>Premium υποστήριξη 24/7</li>
+                            <li>Νομική υποστήριξη</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Επιπλέον Υπηρεσίες -->
+            <div class="additional-services">
+                <div class="service-card">
+                    <div class="icon">🧹</div>
+                    <h3>Καθαρισμός Ακινήτου</h3>
+                    <p>Παραδώστε το ακίνητό σας καθαρό και έτοιμο για τον επόμενο ενοικιαστή. Επαγγελματικός καθαρισμός από πιστοποιημένες εταιρείες.</p>
+                    <div class="price-tag">Από 40€</div>
+                </div>
+
+                <div class="service-card">
+                    <div class="icon">🔧</div>
+                    <h3>Μικροεπιδιορθώσεις</h3>
+                    <p>Μικρές βλάβες που χρειάζονται επισκευή; Αναλαμβάνουμε μικροεπιδιορθώσεις για να παραδώσετε το ακίνητο σε άριστη κατάσταση.</p>
+                    <div class="price-tag">Από 25€</div>
+                </div>
+
+                <div class="service-card">
+                    <div class="icon">📸</div>
+                    <h3>Professional Φωτογράφιση</h3>
+                    <p>Επαγγελματικές φωτογραφίες που αναδεικνύουν το ακίνητό σας. Αυξήστε τις προβολές κατά 300% με ποιοτικές εικόνες.</p>
+                    <div class="price-tag">Από 60€</div>
+                </div>
+
+                <div class="service-card">
+                    <div class="icon">🎥</div>
+                    <h3>Βιντεοσκόπηση & Virtual Tour</h3>
+                    <p>Δημιουργία επαγγελματικού βίντεο και 360° virtual tour. Προβολή κατοικίας χωρίς φυσική παρουσία.</p>
+                    <div class="price-tag">Από 120€</div>
+                </div>
+
+                <div class="service-card">
+                    <div class="icon">✂️</div>
+                    <h3>Μοντάζ & Επεξεργασία</h3>
+                    <p>Επαγγελματικό μοντάζ φωτογραφιών και βίντεο. Δημιουργία promotional video για το ακίνητό σας.</p>
+                    <div class="price-tag">Από 35€</div>
+                </div>
+
+                <div class="service-card">
+                    <div class="icon">👥</div>
+                    <h3>Φοιτητικό Viewing (Σύντομα)</h3>
+                    <p>Φοιτητές με μικροαμοιβή δείχνουν κατοικίες σε συναδέλφους τους. Οικονομική και αξιόπιστη λύση.</p>
+                    <div class="price-tag">Σύντομα</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEARCH RESULTS PAGE -->
+    <section id="search" class="page-section search-results-page">
+        <div class="container">
+            <div class="search-header">
+                <h1 style="margin-bottom: 20px;">Αποτελέσματα Αναζήτησης</h1>
+                <div class="search-filters">
+                    <div class="filter-group">
+                        <select>
+                            <option>Όλες οι πόλεις</option>
+                            <option>Αθήνα</option>
+                            <option>Θεσσαλονίκη</option>
+                            <option>Πάτρα</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select>
+                            <option>Όλοι οι τύποι</option>
+                            <option>Ενοικίαση</option>
+                            <option>Πώληση</option>
+                            <option>Συγκάτοικος</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <input type="number" placeholder="Μέγιστη τιμή">
+                    </div>
+                    <div class="filter-group">
+                        <select>
+                            <option>Όλα τα δωμάτια</option>
+                            <option>1 δωμάτιο</option>
+                            <option>2 δωμάτια</option>
+                            <option>3+ δωμάτια</option>
+                        </select>
+                    </div>
+                </div>
+                <p style="color: #666;">Βρέθηκαν <strong>156 κατοικίες</strong> που ταιριάζουν στα κριτήριά σας</p>
+            </div>
+
+            <div class="results-grid">
+                <div class="property-card" onclick="showPropertyDetails(1)">
+                    <div class="property-image">
+                        🏠
+                        <div class="property-price">350€/μήνα</div>
+                    </div>
+                    <div class="property-content">
+                        <h3>Στούντιο κοντά στο Πανεπιστήμιο Αθηνών</h3>
+                        <p style="color: #666; margin-bottom: 10px;">📍 Ζωγράφου, Αθήνα</p>
+                        <div class="property-details">
+                            <span>🛏️ 1 δωμάτιο</span>
+                            <span>🚿 1 μπάνιο</span>
+                            <span>📐 35 m²</span>
+                        </div>
+                        <div class="property-tags">
+                            <span class="tag">Επιπλωμένο</span>
+                            <span class="tag">Ανακαινισμένο</span>
+                            <span class="tag">Κοντά σε μετρό</span>
+                        </div>
+                        <p style="color: #667eea; font-weight: 600; margin-top: 15px;">Μεσιτία: 100€ (σταθερή χρέωση)</p>
+                    </div>
+                </div>
+
+                <div class="property-card" onclick="showPropertyDetails(2)">
+                    <div class="property-image">
+                        🏠
+                        <div class="property-price">280€/μήνα</div>
+                    </div>
+                    <div class="property-content">
+                        <h3>Διαμέρισμα με μπαλκόνι</h3>
+                        <p style="color: #666; margin-bottom: 10px;">📍 Εξάρχεια, Αθήνα</p>
+                        <div class="property-details">
+                            <span>🛏️ 1 δωμάτιο</span>
+                            <span>🚿 1 μπάνιο</span>
+                            <span>📐 42 m²</span>
+                        </div>
+                        <div class="property-tags">
+                            <span class="tag">Μπαλκόνι</span>
+                            <span class="tag">Ηλιόλουστο</span>
+                            <span class="tag">Κέντρο</span>
+                        </div>
+                        <p style="color: #667eea; font-weight: 600; margin-top: 15px;">Μεσιτία: 100€ (σταθερή χρέωση)</p>
+                    </div>
+                </div>
+
+                <div class="property-card" onclick="showPropertyDetails(3)">
+                    <div class="property-image">
+                        🏠
+                        <div class="property-price">180€/μήνα</div>
+                    </div>
+                    <div class="property-content">
+                        <h3>Φοιτητικό διαμέρισμα με συγκάτοικο</h3>
+                        <p style="color: #666; margin-bottom: 10px;">📍 Κυψέλη, Αθήνα</p>
+                        <div class="property-details">
+                            <span>🛏️ Κοινό καθιστικό</span>
+                            <span>🚿 1 μπάνιο</span>
+                            <span>📐 60 m²</span>
+                        </div>
+                        <div class="property-tags">
+                            <span class="tag">Συγκάτοικος</span>
+                            <span class="tag">WiFi</span>
+                            <span class="tag">Πλυντήριο</span>
+                        </div>
+                        <p style="color: #667eea; font-weight: 600; margin-top: 15px;">Μεσιτία: 50€ (σταθερή χρέωση)</p>
+                    </div>
+                </div>
+
+                <div class="property-card" onclick="showPropertyDetails(4)">
+                    <div class="property-image">
+                        🏠
+                        <div class="property-price">450€/μήνα</div>
+                    </div>
+                    <div class="property-content">
+                        <h3>Διαμέρισμα 2 δωματίων κοντά σε ΑΠΘ</h3>
+                        <p style="color: #666; margin-bottom: 10px;">📍 Τούμπα, Θεσσαλονίκη</p>
+                        <div class="property-details">
+                            <span>🛏️ 2 δωμάτια</span>
+                            <span>🚿 1 μπάνιο</span>
+                            <span>📐 65 m²</span>
+                        </div>
+                        <div class="property-tags">
+                            <span class="tag">Κοντά σε πανεπιστήμιο</span>
+                            <span class="tag">Ασανσέρ</span>
+                            <span class="tag">Κεντρική θέρμανση</span>
+                        </div>
+                        <p style="color: #667eea; font-weight: 600; margin-top: 15px;">Μεσιτία: 100€ (σταθερή χρέωση)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROPERTY DETAILS PAGE -->
+    <section id="property" class="page-section property-page">
+        <div class="container">
+            <button onclick="showPage('search')" style="background: none; border: 1px solid #667eea; color: #667eea; padding: 10px 20px; border-radius: 25px; cursor: pointer; margin-bottom: 20px;">← Πίσω στα αποτελέσματα</button>
+            
+            <div class="property-details-card">
+                <div class="property-gallery">
+                    🏠📸
+                    <div class="gallery-nav">
+                        <div class="gallery-dot active"></div>
+                        <div class="gallery-dot"></div>
+                        <div class="gallery-dot"></div>
+                        <div class="gallery-dot"></div>
+                    </div>
+                </div>
+                
+                <div class="property-info">
+                    <h1>Στούντιο κοντά στο Πανεπιστήμιο Αθηνών</h1>
+                    <p style="color: #666; font-size: 1.2rem; margin-bottom: 10px;">📍 Ζωγράφου, Αθήνα - 5 λεπτά από το μετρό</p>
+                    <div class="property-price-big">350€/μήνα</div>
+                    
+                    <div class="property-features">
+                        <div class="feature-item">
+                            <span class="icon">🛏️</span>
+                            <div>
+                                <strong>1 δωμάτιο</strong><br>
+                                <span style="color: #666;">Υπνοδωμάτιο</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="icon">🚿</span>
+                            <div>
+                                <strong>1 μπάνιο</strong><br>
+                                <span style="color: #666;">Πλήρως εξοπλισμένο</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="icon">📐</span>
+                            <div>
+                                <strong>35 m²</strong><br>
+                                <span style="color: #666;">Συνολική επιφάνεια</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="icon">📅</span>
+                            <div>
+                                <strong>Άμεσα διαθέσιμο</strong><br>
+                                <span style="color: #666;">Έτοιμο για μετακόμιση</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 30px 0;">
+                        <h3 style="margin-bottom: 15px;">Περιγραφή</h3>
+                        <p style="line-height: 1.6; color: #666;">
+                            Πρόκειται για ένα πλήρως ανακαινισμένο στούντιο, ιδανικό για φοιτητές. Βρίσκεται σε ήσυχη γειτονιά, μόλις 5 λεπτά με τα πόδια από το μετρό Ζωγράφου και 10 λεπτά από το Πανεπιστήμιο Αθηνών. Το διαμέρισμα είναι πλήρως επιπλωμένο και διαθέτει όλες τις σύγχρονες ανέσεις.
+                        </p>
+                    </div>
+
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                        <h4 style="color: #333; margin-bottom: 10px;">💰 Κόστος</h4>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Μηνιαίο ενοίκιο:</span>
+                            <strong>350€</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Μεσιτία (σταθερή):</span>
+                            <strong style="color: #667eea;">100€</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Κοινόχρηστα:</span>
+                            <strong>30€</strong>
+                        </div>
+                        <hr style="margin: 10px 0;">
+                        <div style="display: flex; justify-content: space-between; font-size: 1.1rem;">
+                            <span><strong>Συνολικό κόστος μετακόμισης:</strong></span>
+                            <strong style="color: #667eea;">480€</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services Selection -->
+            <div class="services-selection">
+                <h2>🛠️ Επιπλέον Υπηρεσίες</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 30px;">Επιλέξτε τις υπηρεσίες που θέλετε για αυτό το ακίνητο (προαιρετικό)</p>
+                
+                <div class="services-list">
+                    <div class="service-option">
+                        <label style="display: flex; align-items: flex-start; cursor: pointer;">
+                            <input type="checkbox" style="margin-right: 15px; margin-top: 5px;">
+                            <div>
+                                <h4>🧹 Καθαρισμός πριν την παράδοση</h4>
+                                <p>Επαγγελματικός καθαρισμός του χώρου για άψογη παράδοση</p>
+                                <div class="service-price">+45€</div>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <div class="service-option">
+                        <label style="display: flex; align-items: flex-start; cursor: pointer;">
+                            <input type="checkbox" style="margin-right: 15px; margin-top: 5px;">
+                            <div>
+                                <h4>📸 Επαγγελματική φωτογράφιση</h4>
+                                <p>Professional φωτογραφίες για καλύτερη προβολή της αγγελίας</p>
+                                <div class="service-price">+60€</div>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <div class="service-option">
+                        <label style="display: flex; align-items: flex-start; cursor: pointer;">
+                            <input type="checkbox" style="margin-right: 15px; margin-top: 5px;">
+                            <div>
+                                <h4>🔧 Έλεγχος & μικροεπιδιορθώσεις</h4>
+                                <p>Έλεγχος βασικών εγκαταστάσεων και μικρές επισκευές</p>
+                                <div class="service-price">+35€</div>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <div class="service-option">
+                        <label style="display: flex; align-items: flex-start; cursor: pointer;">
+                            <input type="checkbox" style="margin-right: 15px; margin-top: 5px;">
+                            <div>
+                                <h4>🎥 Virtual Tour</h4>
+                                <p>Δημιουργία 360° virtual tour για online προβολές</p>
+                                <div class="service-price">+120€</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; text-align: center;">
+                    <button style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px 40px; border: none; border-radius: 25px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">Επικοινωνία με Ιδιοκτήτη</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REVIEWS PAGE -->
+    <section id="reviews" class="page-section reviews-page">
+        <div class="container">
+            <div class="services-header">
+                <h1>Κριτικές & Feedback</h1>
+                <p>Ένα διαφανές σύστημα αξιολογήσεων που βοηθάει όλους να κάνουν τις σωστές επιλογές</p>
+            </div>
+
+            <div class="reviews-container">
+                <!-- Reviews Display -->
+                <div class="reviews-section">
+                    <h2>📝 Πρόσφατες Κριτικές</h2>
+                    
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">ΜΑ</div>
+                                <div>
+                                    <strong>Μαρία Α.</strong><br>
+                                    <small style="color: #666;">Ενοικιαστής → Ιδιοκτήτης</small>
+                                </div>
+                            </div>
+                            <div class="star-rating">★★★★★</div>
+                        </div>
+                        <p style="color: #666; line-height: 1.6;">
+                            "Εξαιρετικός ιδιοκτήτης! Πολύ κατανοητός και πρόθυμος να λύσει οποιοδήποτε πρόβλημα. Το διαμέρισμα ήταν ακριβώς όπως περιγραφόταν στην αγγελία."
+                        </p>
+                        <small style="color: #999;">πριν από 2 ημέρες</small>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">ΓΚ</div>
+                                <div>
+                                    <strong>Γιάννης Κ.</strong><br>
+                                    <small style="color: #666;">Ιδιοκτήτης → Ενοικιαστής</small>
+                                </div>
+                            </div>
+                            <div class="star-rating">★★★★☆</div>
+                        </div>
+                        <p style="color: #666; line-height: 1.6;">
+                            "Η Αλεξάνδρα ήταν πολύ προσεκτική με το διαμέρισμα. Το παρέδωσε καθαρό και σε καλή κατάσταση. Συνεπής στις πληρωμές."
+                        </p>
+                        <small style="color: #999;">πριν από 1 εβδομάδα</small>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">ΠΔ</div>
+                                <div>
+                                    <strong>Πέτρος Δ.</strong><br>
+                                    <small style="color: #666;">Ενοικιαστής → Μεσιτικό Γραφείο</small>
+                                </div>
+                            </div>
+                            <div class="star-rating">★★★★★</div>
+                        </div>
+                        <p style="color: #666; line-height: 1.6;">
+                            "Το StudyHome ήταν πολύ επαγγελματικό! Με βοήθησαν να βρω το ιδανικό διαμέρισμα γρήγορα και χωρίς κρυφά κόστη. Συνιστώ ανεπιφύλακτα!"
+                        </p>
+                        <small style="color: #999;">πριν από 2 εβδομάδες</small>
+                    </div>
+                </div>
+
+                <!-- Add Review Form -->
+                <div class="add-review-section">
+                    <h2>✍️ Προσθήκη Κριτικής</h2>
+                    
+                    <form class="review-form">
+                        <div class="form-group">
+                            <label>Τύπος Κριτικής</label>
+                            <select required>
+                                <option value="">Επιλέξτε τύπο</option>
+                                <option value="tenant-to-owner">Ενοικιαστής → Ιδιοκτήτης</option>
+                                <option value="owner-to-tenant">Ιδιοκτήτης → Ενοικιαστής</option>
+                                <option value="tenant-to-property">Ενοικιαστής → Ακίνητο</option>
+                                <option value="tenant-to-agency">Ενοικιαστής → Μεσιτικό Γραφείο</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Αξιολόγηση</label>
+                            <div class="rating-input">
+                                <input type="radio" name="rating" value="5" id="star5">
+                                <label for="star5">★</label>
+                                <input type="radio" name="rating" value="4" id="star4">
+                                <label for="star4">★</label>
+                                <input type="radio" name="rating" value="3" id="star3">
+                                <label for="star3">★</label>
+                                <input type="radio" name="rating" value="2" id="star2">
+                                <label for="star2">★</label>
+                                <input type="radio" name="rating" value="1" id="star1">
+                                <label for="star1">★</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ονοματεπώνυμο (θα εμφανιστεί ως αρχικά)</label>
+                            <input type="text" placeholder="π.χ. Μαρία Παπαδοπούλου" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Κριτική</label>
+                            <textarea placeholder="Περιγράψτε την εμπειρία σας..." required></textarea>
+                        </div>
+
+                        <button type="submit" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px 30px; border: none; border-radius: 25px; font-weight: 600; cursor: pointer; width: 100%;">
+                            Δημοσίευση Κριτικής
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Review Categories Info -->
+            <div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); margin-top: 30px;">
+                <h2 style="text-align: center; margin-bottom: 30px;">Πώς λειτουργεί το σύστημα κριτικών;</h2>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">🏠➡️👤</div>
+                        <h4 style="color: #333; margin-bottom: 10px;">Ιδιοκτήτες → Ενοικιαστές</h4>
+                        <p style="color: #666;">Αξιολογήστε τη συμπεριφορά και αξιοπιστία των ενοικιαστών σας</p>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">👤➡️🏠</div>
+                        <h4 style="color: #333; margin-bottom: 10px;">Ενοικιαστές → Ακίνητα</h4>
+                        <p style="color: #666;">Κριτικές για την κατάσταση και ποιότητα των ακινήτων</p>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">👤➡️👤</div>
+                        <h4 style="color: #333; margin-bottom: 10px;">Ενοικιαστές → Ιδιοκτήτες</h4>
+                        <p style="color: #666;">Αξιολογήστε την εξυπηρέτηση και επαγγελματισμό</p>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">👤➡️🏢</div>
+                        <h4 style="color: #333; margin-bottom: 10px;">Ενοικιαστές → Μεσιτικά</h4>
+                        <p style="color: #666;">Κριτικές για την ποιότητα υπηρεσιών μεσιτικών γραφείων</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT PAGE -->
+    <section id="contact" class="page-section">
+        <div style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 120px 0 60px;">
+            <div class="container">
+                <div class="services-header">
+                    <h1>Επικοινωνία</h1>
+                    <p>Έχετε ερωτήσεις; Θέλετε να μάθετε περισσότερα για τις υπηρεσίες μας; Επικοινωνήστε μαζί μας!</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px;">
+                    <div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
+                        <h2 style="margin-bottom: 30px;">📞 Στοιχεία Επικοινωνίας</h2>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #333; margin-bottom: 8px;">📧 Email</h4>
+                            <p style="color: #667eea; font-size: 1.1rem;">info@studyhome.gr</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #333; margin-bottom: 8px;">📱 Τηλέφωνο</h4>
+                            <p style="color: #667eea; font-size: 1.1rem;">+30 210 123 4567</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #333; margin-bottom: 8px;">🕒 Ώρες Λειτουργίας</h4>
+                            <p style="color: #666;">Δευτέρα - Παρασκευή: 9:00 - 18:00<br>
+                            Σάββατο: 10:00 - 14:00</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #333; margin-bottom: 8px;">📍 Διεύθυνση</h4>
+                            <p style="color: #666;">Πανεπιστημίου 25<br>10679, Αθήνα</p>
+                        </div>
+                        
+                        <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #e0e0e0;">
+                            <h4 style="color: #333; margin-bottom: 15px;">🚀 Ανάπτυξη & Feedback</h4>
+                            <p style="color: #666; line-height: 1.6;">
+                                Αυτή είναι μια <strong>mockup έκδοση</strong> για συλλογή feedback. 
+                                Οι απόψεις σας είναι πολύτιμες για την τελική ανάπτυξη της πλατφόρμας!
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
+                        <h2 style="margin-bottom: 30px;">💬 Στείλτε μας μήνυμα</h2>
+                        
+                        <form style="display: flex; flex-direction: column; gap: 20px;">
+                            <div class="form-group">
+                                <label>Ονοματεπώνυμο</label>
+                                <input type="text" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Θέμα</label>
+                                <select required>
+                                    <option value="">Επιλέξτε θέμα</option>
+                                    <option value="general">Γενικές πληροφορίες</option>
+                                    <option value="pricing">Τιμολόγηση υπηρεσιών</option>
+                                    <option value="services">Επιπλέον υπηρεσίες</option>
+                                    <option value="feedback">Feedback για το mockup</option>
+                                    <option value="partnership">Συνεργασία</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Μήνυμα</label>
+                                <textarea placeholder="Γράψτε το μήνυμά σας..." required></textarea>
+                            </div>
+                            
+                            <button type="submit" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px 30px; border: none; border-radius: 25px; font-weight: 600; cursor: pointer;">
+                                Αποστολή Μηνύματος
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Mockup Info Banner -->
+                <div style="background: linear-gradient(45deg, #FFD700, #FFA500); border-radius: 20px; padding: 30px; margin-top: 40px; text-align: center;">
+                    <h3 style="color: #333; margin-bottom: 15px;">🎯 Αυτό είναι ένα Mockup!</h3>
+                    <p style="color: #333; font-size: 1.1rem; line-height: 1.6;">
+                        Δοκιμάστε τη λειτουργικότητα, περιηγηθείτε στις σελίδες και στείλτε μας το feedback σας. 
+                        Κάθε γνώμη μας βοηθάει να βελτιώσουμε την τελική πλατφόρμα!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Navigation functionality
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+            
+            // Update navbar scroll state
+            const navbar = document.getElementById('navbar');
+            if (pageId === 'home') {
+                navbar.classList.remove('scrolled');
+            } else {
+                navbar.classList.add('scrolled');
+            }
+        }
+
+        // Property details functionality
+        function showPropertyDetails(propertyId) {
+            showPage('property');
+            
+            // You could customize the property details based on propertyId here
+            // For mockup purposes, we're showing the same details
+        }
+
+        // Navbar scroll effect (only for home page)
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            const isHome = document.getElementById('home').classList.contains('active');
+            
+            if (isHome && window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else if (isHome) {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Service selection functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Service options selection
+            const serviceOptions = document.querySelectorAll('.service-option');
+            serviceOptions.forEach(option => {
+                const checkbox = option.querySelector('input[type="checkbox"]');
+                
+                option.addEventListener('click', function(e) {
+                    if (e.target !== checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                    }
+                    
+                    if (checkbox.checked) {
+                        option.classList.add('selected');
+                    } else {
+                        option.classList.remove('selected');
+                    }
+                });
+            });
+
+            // Rating system
+            const ratingInputs = document.querySelectorAll('.rating-input input[type="radio"]');
+            ratingInputs.forEach((input, index) => {
+                input.addEventListener('change', function() {
+                    const labels = document.querySelectorAll('.rating-input label');
+                    labels.forEach((label, labelIndex) => {
+                        if (labelIndex >= (5 - this.value)) {
+                            label.style.color = '#FFD700';
+                        } else {
+                            label.style.color = '#ddd';
+                        }
+                    });
+                });
+            });
+
+            // Form submissions (mockup)
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Show success message
+                    const button = this.querySelector('button[type="submit"]');
+                    const originalText = button.textContent;
+                    button.textContent = 'Επιτυχής αποστολή! ✓';
+                    button.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+                    
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+                        
+                        // Reset form
+                        this.reset();
+                        
+                        // Reset rating stars
+                        const labels = this.querySelectorAll('.rating-input label');
+                        labels.forEach(label => {
+                            label.style.color = '#ddd';
+                        });
+                        
+                        // Reset service selections
+                        const selected = this.querySelectorAll('.service-option.selected');
+                        selected.forEach(option => {
+                            option.classList.remove('selected');
+                        });
+                        
+                    }, 2000);
+                });
+            });
+
+            // Search filters (mockup functionality)
+            const filterInputs = document.querySelectorAll('.search-filters select, .search-filters input');
+            filterInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    // In a real app, this would trigger an API call
+                    console.log('Filter changed:', this.value);
+                    
+                    // Show loading state briefly
+                    const resultsGrid = document.querySelector('.results-grid');
+                    if (resultsGrid) {
+                        resultsGrid.style.opacity = '0.5';
+                        setTimeout(() => {
+                            resultsGrid.style.opacity = '1';
+                        }, 500);
+                    }
+                });
+            });
+
+            // Property card hover effects
+            const propertyCards = document.querySelectorAll('.property-card');
+            propertyCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px)';
+                    this.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.15)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.1)';
+                });
+            });
+
+            // Mobile menu toggle
+            const createMobileMenu = () => {
+                if (window.innerWidth <= 768) {
+                    const navContent = document.querySelector('.nav-content');
+                    const navLinks = document.querySelector('.nav-links');
+                    
+                    if (!document.querySelector('.mobile-menu-btn')) {
+                        const menuBtn = document.createElement('button');
+                        menuBtn.className = 'mobile-menu-btn';
+                        menuBtn.innerHTML = '☰';
+                        menuBtn.style.cssText = `
+                            background: none;
+                            border: none;
+                            font-size: 1.5rem;
+                            color: #333;
+                            cursor: pointer;
+                            padding: 10px;
+                            display: block;
+                        `;
+                        
+                        menuBtn.addEventListener('click', () => {
+                            const isVisible = navLinks.style.display === 'flex';
+                            navLinks.style.display = isVisible ? 'none' : 'flex';
+                            navLinks.style.flexDirection = 'column';
+                            navLinks.style.position = 'absolute';
+                            navLinks.style.top = '100%';
+                            navLinks.style.left = '0';
+                            navLinks.style.right = '0';
+                            navLinks.style.background = 'white';
+                            navLinks.style.padding = '20px';
+                            navLinks.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                            navLinks.style.borderRadius = '0 0 15px 15px';
+                        });
+                        
+                        navContent.appendChild(menuBtn);
+                    }
+                }
+            };
+
+            // Initialize mobile menu
+            createMobileMenu();
+            window.addEventListener('resize', createMobileMenu);
+
+            // Gallery navigation (mockup)
+            const galleryDots = document.querySelectorAll('.gallery-dot');
+            galleryDots.forEach((dot, index) => {
+                dot.addEventListener('click', function() {
+                    galleryDots.forEach(d => d.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Add smooth animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '50px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Apply animations to cards
+            const animateElements = document.querySelectorAll('.service-card, .property-card, .review-card, .pricing-card');
+            animateElements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(30px)';
+                element.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+                observer.observe(element);
+            });
+        });
+
+        // Add floating effect to hero elements
+        function addFloatingAnimation() {
+            const heroCard = document.querySelector('.hero-card');
+            if (heroCard) {
+                let start = Date.now();
+                
+                function animate() {
+                    const elapsed = Date.now() - start;
+                    const yOffset = Math.sin(elapsed * 0.001) * 3;
+                    heroCard.style.transform = `translateY(${yOffset}px)`;
+                    requestAnimationFrame(animate);
+                }
+                
+                animate();
+            }
+        }
+
+        // Initialize animations
+        window.addEventListener('load', function() {
+            addFloatingAnimation();
+            
+            // Add page load animation
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        console.log('StudyHome Mockup Loaded Successfully! 🏠✨');
+        console.log('Navigate through pages to test functionality');
+    </script>
+</body>
+</html>
